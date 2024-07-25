@@ -6,6 +6,8 @@ const category = document.getElementById("category")
 
 // Load categories
 const expenseList = document.querySelector("ul")
+const expensesTotal = document.querySelector("aside header h2")
+const expenseQuantity = document.querySelector("aside header p span")
 
 // Allow only numbers
 amount.oninput = () => {
@@ -90,12 +92,65 @@ function expenseAdd(newExpense) {
     removeIcon.setAttribute("alt", "Remover despesa")
 
     // Add the expense icon to the list
-    expenseItem.append(expenseIcon, expenseInfo, expenseAmount,removeIcon)
+    expenseItem.append(expenseIcon, expenseInfo, expenseAmount, removeIcon)
 
     // Create a new div element
     expenseList.append(expenseItem)
+
+    // Update Totals
+    updateTotals()
   } catch (error) {
     alert("Erro ao adicionar despesa")
+    console.log(error)
+  }
+}
+
+// Update totals
+
+function updateTotals() {
+  try {
+    const items = expenseList.children
+
+    // Calculate total of items
+    expenseQuantity.textContent = `${items.length}
+    ${items.length > 1 ? "despesas" : "despesa"}
+    `
+
+    // Calculate total amount
+    let total = 0
+
+    for (let i = 0; i < items.length; i++) {
+      const itemAmount = items[i].querySelector(".expense-amount")
+
+      // Remove any non-digit character
+      let value = itemAmount.textContent.replace(/[^\d,]/g, "").replace(",", ".")
+
+      // Convert the value to number
+      value = parseFloat(value)
+
+      //Verify if value is a number
+      if (isNaN(value)) {
+        return alert("Erro ao calcular o total, o valor não é um número")
+      }
+      total += Number(value)
+    }
+
+    // Add span element to total
+    const symbolBRL = document.createElement("small")
+    symbolBRL.textContent = "R$"
+
+    // Add total to expensesTotal formated text
+    total = formatCurrencyBRL(total).toUpperCase().replace("R$", "")
+
+    // Clear the expenses content
+    expensesTotal.innerHTML = ""
+
+    // Add the symbol and total to expensesTotal
+    expensesTotal.append(symbolBRL, total)
+
+    // expensesTotal.textContent = formatCurrencyBRL(total)
+  } catch (error) {
+    alert("Não foi possível atualizar os totais")
     console.log(error)
   }
 }
