@@ -97,6 +97,8 @@ function expenseAdd(newExpense) {
     // Create a new div element
     expenseList.append(expenseItem)
 
+    // Clear the form
+    formClear()
     // Update Totals
     updateTotals()
   } catch (error) {
@@ -123,7 +125,9 @@ function updateTotals() {
       const itemAmount = items[i].querySelector(".expense-amount")
 
       // Remove any non-digit character
-      let value = itemAmount.textContent.replace(/[^\d,]/g, "").replace(",", ".")
+      let value = itemAmount.textContent
+        .replace(/[^\d,]/g, "")
+        .replace(",", ".")
 
       // Convert the value to number
       value = parseFloat(value)
@@ -153,4 +157,24 @@ function updateTotals() {
     alert("Não foi possível atualizar os totais")
     console.log(error)
   }
+}
+
+// Remove expense
+
+expenseList.addEventListener("click", (event) => {
+  if (event.target.classList.contains("remove-icon")) {
+    // get the parent element
+    const item = event.target.closest(".expense")
+    // remove the item
+    item.remove()
+  }
+
+  // Update totals
+  updateTotals()
+})
+
+function formClear() {
+  expense.value = ""
+  category.value = ""
+  amount.value = ""
 }
